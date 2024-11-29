@@ -20,7 +20,7 @@ function Provider({children}) {
     })
 
     console.log(dataResult.data);
-    setUserDetail(dataResult.data);
+    setUserDetail(dataResult.data.result);
   }
 
   return (
