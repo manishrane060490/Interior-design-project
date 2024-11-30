@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react'
 
 const EmptyState = () => {
@@ -9,7 +10,9 @@ const EmptyState = () => {
 
       <h2 className='font-medium text-xl text-gray-500'>Create New AI Interior and Redesign your room</h2>
 
-      <Button>+ Redesign Room</Button>
+      <Link href={'/dashboard/create-new'}>
+        <Button>+ Redesign Room</Button>
+      </Link>
     </div>
   )
 }
