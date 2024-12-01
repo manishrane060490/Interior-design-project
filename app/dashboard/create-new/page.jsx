@@ -6,6 +6,9 @@ import RoomType from './_components/RoomType'
 import DesignType from './_components/DesignType'
 import AdditionalReq from './_components/AdditionalReq'
 import { Button } from '@/components/ui/button'
+import axios from 'axios'
+import { getDownloadURL, ref, uploadBytes } from '@firebase/storage'
+import { storage } from '@/config/firebaseConfig'
 
 const page = () => {
     const [formData, setFormData] = useState([]);
@@ -15,7 +18,31 @@ const page = () => {
             [field]: value
         }))
 
-        console.log(formData)
+        
+    }
+
+    const generateAIImage = async () => {
+        const rawImageUrl = await saveImageToFB();
+        const result = await axios.post('/api/redesign-room', {
+            imageUrl: rawImageUrl,
+            roomType: formData?.roomType,
+            designType: formData?.designType,
+            additionalReq: formData?.additionalReq
+        });
+        console.log(result.data);
+    }
+
+    const saveImageToFB = async () => {
+        const fileName = Date.now()+"_raw.png"
+
+        const imageRef = ref(storage, 'ai-redesign-room/'+fileName);
+
+        await uploadBytes(imageRef, formData.image).then(res => {console.log('file uploaded')})
+
+
+        const downloadUrl = await getDownloadURL(imageRef);
+        console.log(downloadUrl);
+        return downloadUrl;
     }
   return (
     <div>
@@ -29,7 +56,7 @@ const page = () => {
             <RoomType selectRoomType={(value) => onHandleInputChange(value, 'roomType')}/>
             <DesignType selectDesignType={(value) => onHandleInputChange(value, 'designType')}/>
             <AdditionalReq AdditionalReqSubmitted={(value) => onHandleInputChange(value, 'additionalReq')}/>
-            <Button className="w-full mt-5">Generate Design</Button>
+            <Button className="w-full mt-5" onClick={generateAIImage}>Generate Design</Button>
             <p className='text-sm mb-52 text-gray'>Note: 1 credit will be use to generate design</p>
         </div>
       </div>
